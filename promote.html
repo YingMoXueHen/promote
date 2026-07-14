@@ -4,17 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- ========================================================== -->
-    <!--  ⭐⭐⭐ 微信/QQ 卡片标签（不带图片）⭐⭐⭐                   -->
-    <!-- ========================================================== -->
-    <meta property="og:title" content="🔥 限时抢购！全场低至3折" />
-    <meta property="og:description" content="品牌大促最后一天，点击立即抢购，错过等一年！" />
-    <meta property="og:url" content="https://yingmoxuehen.github.io/promote/promote.html" />
-    <meta property="og:site_name" content="优选商城" />
-    <meta property="og:type" content="website" />
-    <!-- 没有 og:image，微信会显示默认灰色图标 -->
-    <!-- ========================================================== -->
-
     <title>限时抢购 - 优选商城</title>
 
     <style>
@@ -69,45 +58,74 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ===== 主卡片 ===== */
+        /* ===== 主卡片（放大版） ===== */
         .container {
-            max-width: 400px;
+            max-width: 560px;
             width: 100%;
             text-align: center;
         }
 
         .card-box {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 30px 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.10);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            transition: transform 0.25s ease;
         }
 
-        .card-box h1 {
-            font-size: 22px;
+        .card-box:active {
+            transform: scale(0.97);
+        }
+
+        /* 横向随机图片 */
+        .card-image {
+            width: 100%;
+            height: 260px;
+            background: #e8ecf1;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .card-body {
+            padding: 28px 28px 32px;
+        }
+
+        .card-body h1 {
+            font-size: 26px;
             color: #1a1a1a;
             margin-bottom: 10px;
+            font-weight: 700;
         }
 
-        .card-box p {
-            font-size: 15px;
+        .card-body p {
+            font-size: 16px;
             color: #666;
             line-height: 1.8;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 48px;
+            padding: 14px 56px;
             background: #ff6b35;
             color: #fff;
             border: none;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+            box-shadow: 0 6px 24px rgba(255, 107, 53, 0.35);
             transition: transform 0.2s;
             user-select: none;
         }
@@ -146,7 +164,7 @@
         .block-box {
             background: #fff;
             border-radius: 24px;
-            max-width: 360px;
+            max-width: 380px;
             width: 100%;
             padding: 40px 30px 35px;
             text-align: center;
@@ -184,23 +202,39 @@
             margin-bottom: 24px;
         }
 
-        .block-box .btn-open {
-            display: inline-block;
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn-open {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
             background: #007aff;
             color: #fff;
             border: none;
-            padding: 12px 40px;
             border-radius: 30px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
             transition: background 0.2s, transform 0.15s;
         }
 
-        .block-box .btn-open:active {
-            background: #0066dd;
-            transform: scale(0.96);
+        .btn-group .btn-open:active {
+            transform: scale(0.95);
+        }
+
+        .btn-group .btn-open.copy-btn {
+            background: #34c759;
+            box-shadow: 0 8px 24px rgba(52, 199, 89, 0.3);
+        }
+
+        .btn-group .btn-open.copy-btn:active {
+            background: #2db84e;
         }
 
         .block-box .hint-bottom {
@@ -208,62 +242,152 @@
             font-size: 13px;
             color: #aaa;
         }
+
+        /* ===== Toast 提示 ===== */
+        #toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0, 0, 0, 0.78);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 99999;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================= -->
-    <!--  加载动画遮罩（1秒后自动消失）                                 -->
-    <!-- ============================================================= -->
+    <!-- ===== 加载动画 ===== -->
     <div id="loaderOverlay">
         <div class="loader"></div>
     </div>
 
-    <!-- ============================================================= -->
-    <!--  主卡片                                                       -->
-    <!-- ============================================================= -->
+    <!-- ===== 主卡片（放大版 + 随机图片） ===== -->
     <div class="container">
         <div class="card-box" id="mainCard">
-            <h1>🔥 限时抢购 · 全场3折起</h1>
-            <p>品牌大促最后一天，点击下方按钮立即抢购，错过等一年！</p>
-            <a href="https://mall.example.com/product/12345" class="btn" id="gotoBtn">立即抢购 →</a>
-            <div class="hint">🔒 安全支付 · 正品保障</div>
+            <!-- 横向随机图片 -->
+            <div class="card-image">
+                <img src="https://picsum.photos/800/400?random=1" alt="随机图片" id="randomImg" loading="lazy">
+            </div>
+            <div class="card-body">
+                <h1>🔥 限时抢购 · 全场3折起</h1>
+                <p>品牌大促最后一天，点击下方按钮立即抢购，错过等一年！</p>
+                <a href="https://mall.example.com/product/12345" class="btn" id="gotoBtn">立即抢购 →</a>
+                <div class="hint">🔒 安全支付 · 正品保障</div>
+            </div>
         </div>
     </div>
 
-    <!-- ============================================================= -->
-    <!--  微信/QQ 拦截遮罩                                              -->
-    <!-- ============================================================= -->
+    <!-- ===== 微信/QQ 拦截遮罩 ===== -->
     <div id="blockOverlay">
         <div class="block-box">
             <div class="icon-big">📱</div>
             <h2>请用浏览器打开</h2>
             <p>
                 当前在微信/QQ内无法直接访问<br>
-                点击下方按钮，使用系统浏览器打开
+                请复制链接后在浏览器中打开
             </p>
-            <button class="btn-open" id="openBrowserBtn">用浏览器打开</button>
+            <div class="btn-group">
+                <button class="btn-open" id="openBrowserBtn">🌐 用浏览器打开</button>
+                <button class="btn-open copy-btn" id="copyLinkBtn">📋 复制链接</button>
+            </div>
             <div class="hint-bottom">🔒 安全加密链接 · 请放心访问</div>
         </div>
     </div>
+
+    <!-- ===== Toast ===== -->
+    <div id="toast"></div>
 
     <!-- ============================================================= -->
     <!--  JavaScript                                                   -->
     <!-- ============================================================= -->
     <script>
         // ================================================================
-        //  ⭐⭐⭐ 真实目标链接（只在这里配置一次）⭐⭐⭐
+        //  ⭐⭐⭐ 真实目标链接（只在这里配置）⭐⭐⭐
         // ================================================================
         const TARGET_URL = 'https://mall.example.com/product/12345';
 
+        const CURRENT_URL = window.location.href;
+
         // ================================================================
-        //  工具函数：检测微信 / QQ
+        //  工具函数
         // ================================================================
         function isWechatOrQQ() {
             const ua = navigator.userAgent.toLowerCase();
             return ua.indexOf('micromessenger') !== -1 ||
                 ua.indexOf('qq/') !== -1 ||
                 ua.indexOf('mqqbrowser') !== -1;
+        }
+
+        // ================================================================
+        //  Toast
+        // ================================================================
+        let toastTimer = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // ================================================================
+        //  复制链接
+        // ================================================================
+        function copyLink(url, successMsg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(function() {
+                    showToast(successMsg || '✅ 链接已复制');
+                }).catch(function() {
+                    fallbackCopy(url, successMsg);
+                });
+            } else {
+                fallbackCopy(url, successMsg);
+            }
+        }
+
+        function fallbackCopy(url, successMsg) {
+            const textarea = document.createElement('textarea');
+            textarea.value = url;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            textarea.style.pointerEvents = 'none';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg || '✅ 链接已复制');
+            } catch (e) {
+                showToast('❌ 复制失败，请手动复制');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // ================================================================
+        //  随机刷新图片（每次打开页面不同）
+        // ================================================================
+        function refreshImage() {
+            const img = document.getElementById('randomImg');
+            const seed = Date.now() + Math.random() * 10000;
+            img.src = 'https://picsum.photos/800/400?random=' + seed;
         }
 
         // ================================================================
@@ -274,86 +398,76 @@
         const mainCard = document.getElementById('mainCard');
         const gotoBtn = document.getElementById('gotoBtn');
         const openBtn = document.getElementById('openBrowserBtn');
+        const copyBtn = document.getElementById('copyLinkBtn');
 
         // ================================================================
         //  1. 加载动画：1秒后消失
         // ================================================================
         setTimeout(function() {
             loader.classList.add('hide');
-            // 完全隐藏（避免占位）
             setTimeout(function() {
                 loader.style.display = 'none';
             }, 500);
         }, 1000);
 
         // ================================================================
-        //  2. 环境判断 & 行为绑定
+        //  2. 刷新随机图片（每次不同）
+        // ================================================================
+        refreshImage();
+
+        // ================================================================
+        //  3. 环境判断 & 行为绑定
         // ================================================================
         const isBlocked = isWechatOrQQ();
 
         if (isBlocked) {
-            // ---- 微信/QQ 环境：显示遮罩，禁用所有跳转 ----
             blockOverlay.classList.add('show');
 
-            // 阻止卡片点击跳转
             mainCard.addEventListener('click', function(e) {
                 e.preventDefault();
             });
 
-            // 阻止按钮点击跳转
             gotoBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                // 给用户一个视觉反馈
                 gotoBtn.style.transform = 'scale(0.95)';
                 setTimeout(function() {
                     gotoBtn.style.transform = '';
                 }, 200);
             });
 
-            // “用浏览器打开”按钮：跳转到当前页面，让系统浏览器接管
             openBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                window.location.href = window.location.href;
+                copyLink(CURRENT_URL, '✅ 链接已复制，请到浏览器中打开');
             });
 
-            console.log('🚫 当前在微信/QQ，已启用拦截');
+            copyBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                copyLink(CURRENT_URL, '✅ 链接已复制');
+            });
+
+            console.log('🚫 微信/QQ 拦截已启用');
         } else {
-            // ---- 普通浏览器环境：正常跳转 ----
             blockOverlay.classList.remove('show');
 
-            // 点击卡片任意位置跳转
             mainCard.addEventListener('click', function() {
                 window.location.href = TARGET_URL;
             });
 
-            // 按钮点击跳转（阻止事件冒泡，避免触发两次）
             gotoBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 window.location.href = TARGET_URL;
             });
 
-            console.log('✅ 当前在普通浏览器，卡片可正常跳转');
-            console.log('🎯 目标链接:', TARGET_URL);
+            console.log('✅ 普通浏览器，卡片可正常跳转');
         }
 
-        // ================================================================
-        //  3. 兜底：如果遮罩意外显示了但实际不是微信/QQ，强制隐藏
-        // ================================================================
+        // 兜底
         if (!isWechatOrQQ()) {
             blockOverlay.classList.remove('show');
         }
 
-        // ================================================================
-        //  4. 防止遮罩背景点击穿透
-        // ================================================================
-        blockOverlay.addEventListener('click', function(e) {
-            if (e.target === blockOverlay) {
-                // 点击遮罩背景不做任何事，保持强制
-            }
-        });
-
-        console.log('✅ 页面已加载完成');
+        console.log('✅ 页面加载完成');
     </script>
 
 </body>
