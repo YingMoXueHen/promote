@@ -139,67 +139,76 @@
             color: #aaa;
         }
 
-        /* ===== 微信/QQ 拦截遮罩 ===== */
+        /* ===== 微信/QQ 拦截遮罩（全屏无死角） ===== */
         #blockOverlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            padding: 30px;
+            padding: 0;
+            /* 完全无内边距 */;
         }
 
         #blockOverlay.show {
             display: flex;
         }
 
-        /* ⭐ 弹窗比卡片大：max-width: 600px（卡片是560px） */
+        /* ⭐ 弹窗完全占满屏幕，无任何边距 */
         .block-box {
-            background: #fff;
-            border-radius: 24px;
-            max-width: 600px;
+            background: #ffffff;
+            border-radius: 0;
+            /* 无圆角，完全平铺 */
+            max-width: 100%;
             width: 100%;
-            padding: 48px 40px 42px;
+            height: 100%;
+            /* 铺满整个屏幕高度 */
+            padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
-            animation: fadeUp 0.4s ease;
+            box-shadow: none;
+            animation: fadeUp 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: scale(0.96);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: scale(1);
             }
         }
 
         .block-box .icon-big {
-            font-size: 64px;
-            margin-bottom: 16px;
+            font-size: 80px;
+            margin-bottom: 20px;
         }
 
         .block-box h2 {
-            font-size: 24px;
+            font-size: 30px;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .block-box p {
-            font-size: 17px;
+            font-size: 18px;
             color: #666;
             line-height: 1.8;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
+            max-width: 400px;
         }
 
         .btn-group {
@@ -207,20 +216,22 @@
             gap: 14px;
             justify-content: center;
             flex-wrap: wrap;
+            width: 100%;
+            max-width: 400px;
         }
 
         .btn-group .btn-open {
             flex: 1;
             min-width: 140px;
-            padding: 14px 24px;
+            padding: 16px 28px;
             background: #007aff;
             color: #fff;
             border: none;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: 19px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 8px 28px rgba(0, 122, 255, 0.35);
             transition: background 0.2s, transform 0.15s;
         }
 
@@ -230,7 +241,7 @@
 
         .btn-group .btn-open.copy-btn {
             background: #34c759;
-            box-shadow: 0 8px 24px rgba(52, 199, 89, 0.3);
+            box-shadow: 0 8px 28px rgba(52, 199, 89, 0.35);
         }
 
         .btn-group .btn-open.copy-btn:active {
@@ -238,22 +249,23 @@
         }
 
         .block-box .hint-bottom {
-            margin-top: 18px;
+            margin-top: 20px;
             font-size: 14px;
             color: #aaa;
+            max-width: 400px;
         }
 
         /* ===== Toast 提示 ===== */
         #toast {
             position: fixed;
-            bottom: 100px;
+            bottom: 60px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: rgba(0, 0, 0, 0.78);
+            background: rgba(0, 0, 0, 0.85);
             color: #fff;
-            padding: 12px 28px;
+            padding: 14px 32px;
             border-radius: 30px;
-            font-size: 15px;
+            font-size: 16px;
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
             z-index: 99999;
@@ -292,7 +304,7 @@
         </div>
     </div>
 
-    <!-- ===== 微信/QQ 拦截遮罩 ===== -->
+    <!-- ===== 微信/QQ 拦截遮罩（全屏无死角） ===== -->
     <div id="blockOverlay">
         <div class="block-box">
             <div class="icon-big">📱</div>
