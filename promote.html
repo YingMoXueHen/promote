@@ -58,7 +58,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ===== 主卡片（放大版） ===== */
+        /* ===== 主卡片 ===== */
         .container {
             max-width: 560px;
             width: 100%;
@@ -78,7 +78,6 @@
             transform: scale(0.97);
         }
 
-        /* 横向随机图片 */
         .card-image {
             width: 100%;
             height: 260px;
@@ -161,13 +160,13 @@
             display: flex;
         }
 
+        /* ⭐ 弹窗比卡片大：max-width: 600px（卡片是560px） */
         .block-box {
             background: #fff;
             border-radius: 24px;
-            max-width: 560px;
-            max-height: 560px;
+            max-width: 600px;
             width: 100%;
-            padding: 40px 30px 35px;
+            padding: 48px 40px 42px;
             text-align: center;
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
             animation: fadeUp 0.4s ease;
@@ -185,40 +184,40 @@
         }
 
         .block-box .icon-big {
-            font-size: 56px;
-            margin-bottom: 12px;
+            font-size: 64px;
+            margin-bottom: 16px;
         }
 
         .block-box h2 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .block-box p {
-            font-size: 15px;
+            font-size: 17px;
             color: #666;
-            line-height: 1.6;
-            margin-bottom: 24px;
+            line-height: 1.8;
+            margin-bottom: 28px;
         }
 
         .btn-group {
             display: flex;
-            gap: 12px;
+            gap: 14px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .btn-group .btn-open {
             flex: 1;
-            min-width: 120px;
-            padding: 12px 20px;
+            min-width: 140px;
+            padding: 14px 24px;
             background: #007aff;
             color: #fff;
             border: none;
             border-radius: 30px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
@@ -239,8 +238,8 @@
         }
 
         .block-box .hint-bottom {
-            margin-top: 16px;
-            font-size: 13px;
+            margin-top: 18px;
+            font-size: 14px;
             color: #aaa;
         }
 
@@ -278,10 +277,9 @@
         <div class="loader"></div>
     </div>
 
-    <!-- ===== 主卡片（放大版 + 随机图片） ===== -->
+    <!-- ===== 主卡片 ===== -->
     <div class="container">
         <div class="card-box" id="mainCard">
-            <!-- 横向随机图片 -->
             <div class="card-image">
                 <img src="https://picsum.photos/800/400?random=1" alt="随机图片" id="randomImg" loading="lazy">
             </div>
@@ -383,7 +381,7 @@
         }
 
         // ================================================================
-        //  随机刷新图片（每次打开页面不同）
+        //  随机刷新图片
         // ================================================================
         function refreshImage() {
             const img = document.getElementById('randomImg');
@@ -412,7 +410,7 @@
         }, 1000);
 
         // ================================================================
-        //  2. 刷新随机图片（每次不同）
+        //  2. 刷新随机图片
         // ================================================================
         refreshImage();
 
