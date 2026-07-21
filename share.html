@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>在线学习资源</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ===== 加载动画遮罩 ===== */
+        #loaderOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.4s ease;
+        }
+        #loaderOverlay.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e8e8e8;
+            border-top: 4px solid #ff6b35;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== 主卡片 ===== */
+        .container {
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+        }
+        .card-box {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            transition: transform 0.25s ease;
+        }
+        .card-box:active {
+            transform: scale(0.97);
+        }
+        .card-image {
+            width: 100%;
+            height: 260px;
+            background: #e8ecf1;
+            overflow: hidden;
+        }
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .card-body {
+            padding: 28px 28px 32px;
+        }
+        .card-body h1 {
+            font-size: 26px;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .card-body p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 22px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 56px;
+            background: #ff6b35;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 6px 24px rgba(255, 107, 53, 0.35);
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .hint {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* ===== 微信/QQ 拦截遮罩（全屏无死角） ===== */
+        #blockOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 0;
+        }
+        #blockOverlay.show {
+            display: flex;
+        }
+        .block-box {
+            background: #ffffff;
+            border-radius: 0;
+            max-width: 100%;
+            width: 100%;
+            height: 100%;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: none;
+            animation: fadeUp 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .block-box .icon-big {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .block-box h2 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+        .block-box p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            max-width: 420px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 480px;
+        }
+        .btn-group .btn-open {
+            flex: 1;
+            min-width: 180px;
+            padding: 18px 32px;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(0, 122, 255, 0.35);
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-group .btn-open:active {
+            transform: scale(0.95);
+        }
+        .btn-group .btn-open.copy-btn {
+            background: #34c759;
+            box-shadow: 0 8px 28px rgba(52, 199, 89, 0.35);
+        }
+        .btn-group .btn-open.copy-btn:active {
+            background: #2db84e;
+        }
+        .block-box .hint-bottom {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #aaa;
+            max-width: 420px;
+        }
+
+        /* ===== Toast ===== */
+        #toast {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 99999;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 加载动画 -->
+    <div id="loaderOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- 主卡片 -->
+    <div class="container">
+        <div class="card-box" id="mainCard">
+            <div class="card-image">
+                <!-- 随机图片：每次刷新都会变化 -->
+                <img src="https://picsum.photos/800/400?random=1" alt="随机配图" id="randomImg" loading="lazy">
+            </div>
+            <div class="card-body">
+                <h1>📚 在线学习资源</h1>
+                <p>汇聚优质学习内容，助力你的每一次进步。</p>
+                <!-- 按钮链接由 JS 动态注入 -->
+                <a href="#" class="btn" id="gotoBtn">立即打开 →</a>
+                <div class="hint">🔒 安全支付 · 安全保障</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 微信/QQ 拦截遮罩 -->
+    <div id="blockOverlay">
+        <div class="block-box">
+            <div class="icon-big">📱</div>
+            <h2>请用浏览器打开</h2>
+            <p>
+                当前在微信/QQ内无法直接访问<br>
+                请复制链接后在浏览器中打开
+            </p>
+            <div class="btn-group">
+                <button class="btn-open" id="openBrowserBtn">🌐 用浏览器打开</button>
+                <button class="btn-open copy-btn" id="copyLinkBtn">📋 复制链接</button>
+            </div>
+            <div class="hint-bottom">🔒 安全加密链接 · 请放心访问</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script>
+        // ================================================================
+        //  ⭐⭐⭐ 预设域名（自动省略，不显示在链接上）⭐⭐⭐
+        // ================================================================
+        const PRESET_DOMAIN = 'https://onlineresource.10180707.xyz/BroadStrategyEverlink/';
+
+        // ================================================================
+        //  从 URL 参数中获取目标路径，并拼接完整链接
+        //  格式: ?link=p.html  →  完整链接: https://onlineresource.10180707.xyz/BroadStrategyEverlink/p.html
+        //  如果 link 参数为空或不存在，则使用预设域名本身
+        // ================================================================
+        function getTargetUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const linkParam = urlParams.get('link');
+            
+            // 如果 link 参数存在且不为空
+            if (linkParam && linkParam.trim() !== '') {
+                try {
+                    // 解码参数（支持 URL 编码）
+                    const decodedPath = decodeURIComponent(linkParam.trim());
+                    // 移除路径开头的斜杠（如果有），避免双斜杠
+                    const cleanPath = decodedPath.replace(/^\/+/, '');
+                    // 拼接完整链接：预设域名 + 路径
+                    return PRESET_DOMAIN + cleanPath;
+                } catch (e) {
+                    console.warn('链接解码失败，使用预设域名');
+                    return PRESET_DOMAIN;
+                }
+            }
+            
+            // 没有 link 参数，返回预设域名
+            return PRESET_DOMAIN;
+        }
+
+        // 获取真实目标链接
+        const TARGET_URL = getTargetUrl();
+        // 当前页面 URL（用于复制引导）
+        const CURRENT_URL = window.location.href;
+
+        // ================================================================
+        //  工具：环境检测
+        // ================================================================
+        function isWechatOrQQ() {
+            const ua = navigator.userAgent.toLowerCase();
+            return ua.indexOf('micromessenger') !== -1 ||
+                ua.indexOf('qq/') !== -1 ||
+                ua.indexOf('mqqbrowser') !== -1;
+        }
+
+        // ================================================================
+        //  Toast
+        // ================================================================
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // ================================================================
+        //  复制功能（兼容）
+        // ================================================================
+        function copyLink(url, successMsg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast(successMsg || '✅ 链接已复制');
+                }).catch(() => {
+                    fallbackCopy(url, successMsg);
+                });
+            } else {
+                fallbackCopy(url, successMsg);
+            }
+        }
+        function fallbackCopy(url, successMsg) {
+            const textarea = document.createElement('textarea');
+            textarea.value = url;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            textarea.style.pointerEvents = 'none';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg || '✅ 链接已复制');
+            } catch (e) {
+                showToast('❌ 复制失败，请手动复制');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // ================================================================
+        //  随机刷新图片（每次页面加载/刷新都不同）
+        // ================================================================
+        function refreshImage() {
+            const img = document.getElementById('randomImg');
+            const seed = Date.now() + Math.random() * 10000;
+            img.src = 'https://picsum.photos/800/400?random=' + seed;
+        }
+
+        // ================================================================
+        //  DOM 引用
+        // ================================================================
+        const loader = document.getElementById('loaderOverlay');
+        const blockOverlay = document.getElementById('blockOverlay');
+        const mainCard = document.getElementById('mainCard');
+        const gotoBtn = document.getElementById('gotoBtn');
+        const openBtn = document.getElementById('openBrowserBtn');
+        const copyBtn = document.getElementById('copyLinkBtn');
+
+        // ================================================================
+        //  1. 加载动画：1秒后消失
+        // ================================================================
+        setTimeout(function() {
+            loader.classList.add('hide');
+            setTimeout(function() {
+                loader.style.display = 'none';
+            }, 500);
+        }, 1000);
+
+        // ================================================================
+        //  2. 刷新随机图片
+        // ================================================================
+        refreshImage();
+
+        // ================================================================
+        //  3. 注入真实链接到按钮（自动拼接预设域名）
+        // ================================================================
+        console.log('🎯 预设域名:', PRESET_DOMAIN);
+        console.log('🔗 完整目标链接:', TARGET_URL);
+        
+        // 设置按钮的 href 为目标链接
+        gotoBtn.href = TARGET_URL;
+        
+        // 添加点击事件（在微信环境下阻止跳转）
+        gotoBtn.addEventListener('click', function(e) {
+            if (isWechatOrQQ()) {
+                e.preventDefault();
+                e.stopPropagation();
+                // 微信内点击按钮显示遮罩
+                blockOverlay.classList.add('show');
+            }
+            // 普通浏览器：正常跳转
+        });
+
+        // ================================================================
+        //  4. 环境判断 & 行为绑定
+        // ================================================================
+        const isBlocked = isWechatOrQQ();
+
+        if (isBlocked) {
+            // 微信/QQ 环境：显示遮罩，阻止所有跳转
+            blockOverlay.classList.add('show');
+
+            // 卡片点击无效
+            mainCard.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            // 遮罩内按钮：复制链接（复制当前页面 URL）
+            openBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                copyLink(CURRENT_URL, '✅ 链接已复制，请到浏览器中打开');
+            });
+
+            copyBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                copyLink(CURRENT_URL, '✅ 链接已复制');
+            });
+
+            console.log('🚫 微信/QQ 拦截已启用');
+        } else {
+            // 普通浏览器：隐藏遮罩，所有跳转正常
+            blockOverlay.classList.remove('show');
+
+            // 卡片点击跳转目标链接
+            mainCard.addEventListener('click', function() {
+                window.location.href = TARGET_URL;
+            });
+
+            console.log('✅ 普通浏览器，卡片可正常跳转');
+        }
+
+        // 兜底：确保遮罩状态正确
+        if (!isWechatOrQQ()) {
+            blockOverlay.classList.remove('show');
+        }
+
+        console.log('✅ 页面加载完成');
+        console.log('📌 当前页面URL:', CURRENT_URL);
+        console.log('🔗 最终跳转链接:', TARGET_URL);
+    </script>
+</body>
+</html>
